@@ -42,7 +42,34 @@ def draw_network(G, status, step):
     plt.title(f'Step {step}')
     plt.show()
 
+# 状態の履歴を保存するリスト
+susceptible_count_history = []
+infected_count_history = []
+recovered_count_history = []
+
 # シミュレーション開始
 for step in range(steps):
     draw_network(G, status, step)
+    # カウントと履歴の更新
+    susceptible_count = sum(1 for state in status.values() if state == 'S')
+    infected_count = sum(1 for state in status.values() if state == 'I')
+    recovered_count = sum(1 for state in status.values() if state == 'R')
+    
+    susceptible_count_history.append(susceptible_count)
+    infected_count_history.append(infected_count)
+    recovered_count_history.append(recovered_count)
+    
+    # ステータスを更新
     status = update_status(G, status, transmission_probability, recovery_probability)
+
+# 感染者・非感染者・回復者の数を表示する折れ線グラフ
+plt.figure(figsize=(10, 6))
+plt.plot(range(steps), susceptible_count_history, label="Susceptible", color='lightblue')
+plt.plot(range(steps), infected_count_history, label="Infected", color='red')
+plt.plot(range(steps), recovered_count_history, label="Recovered", color='green')
+plt.xlabel('Step')
+plt.ylabel('Count')
+plt.title('SIR Model Simulation')
+plt.legend()
+plt.grid(True)
+plt.show()
